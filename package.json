@@ -1,0 +1,16 @@
+{
+  "name": "mon-vieux-grimoire",
+  "version": "1.0.0",
+  "description": "api de l'application mon vieux grimoire, P7 du parcours développeur web, Openclassrooms",
+  "main": "server.js",
+  "scripts": {
+    "start":"nodemon server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "lau sebastien",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0",
+    "mongoose": "^8.7.0"
+  }
+}
