@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import User from "../models/user";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   const { password, email } = req.body;
@@ -31,10 +32,12 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           .status(401)
           .json({ message: "Paire login/mot de passe incorrecte" });
       }
-
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
+        expiresIn: "24h",
+      });
       res.status(200).json({
         userId: user._id,
-        token: "TOKEN",
+        token: token,
       });
     }
   } catch (error) {

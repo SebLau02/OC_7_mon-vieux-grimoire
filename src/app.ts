@@ -2,11 +2,13 @@ import express, { Request, Response, NextFunction } from "express";
 const mongoose = require("mongoose");
 const app = express();
 import authRoutes from "./routes/auth";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 mongoose
   .connect(
-    "mongodb+srv://OCR_P7:dSiBGFPe1bhVNMGY@cluster0.je84pvt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-    { useNewUrlParser: true, useUnifiedTopology: true }
+    "mongodb+srv://OCR_P7:dSiBGFPe1bhVNMGY@cluster0.je84pvt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
