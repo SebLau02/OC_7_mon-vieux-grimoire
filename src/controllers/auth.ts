@@ -11,7 +11,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     res.status(201).json({ message: "Utilisateur créé avec succès!" });
   } catch (error: any) {
     res.status(400).json({
-      error: error.message || "Erreur lors de la création de l'utilisateur",
+      error: "Erreur lors de la création de l'utilisateur",
     });
   }
 };
