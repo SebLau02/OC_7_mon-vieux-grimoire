@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
+import uniqueValidator from "mongoose-unique-validator";
 
 interface IUser extends Document {
   email: string;
@@ -16,6 +17,8 @@ const userSchema = new Schema<IUser>({
     required: true,
   },
 });
+
+userSchema.plugin(uniqueValidator);
 
 const User = mongoose.model<IUser>("User", userSchema);
 

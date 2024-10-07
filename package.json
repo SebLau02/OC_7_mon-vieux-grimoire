@@ -11,11 +11,15 @@
   "author": "lau sebastien",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "express": "^4.21.0",
-    "mongoose": "^8.7.0"
+    "mongoose": "^8.7.0",
+    "mongoose-unique-validator": "^4.0.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.0",
+    "@types/mongoose-unique-validator": "^1.0.9",
     "@types/node": "^22.7.4",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
