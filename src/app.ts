@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 const mongoose = require("mongoose");
 const app = express();
 import authRoutes from "./routes/auth";
-import bookRoutesd from "./routes/book";
+import bookRoutes from "./routes/book";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -30,6 +30,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/books", bookRoutesd);
+app.use("/api/books", bookRoutes);
 
 export default app;
