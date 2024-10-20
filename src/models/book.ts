@@ -2,6 +2,7 @@ import mongoose, { Document, Schema } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
 interface IBook extends Document {
+  userId: String;
   title: string;
   author: string;
   imageUrl: string;
@@ -21,6 +22,10 @@ const ratingSchema = new Schema<Rating>({
 });
 
 const bookSchema = new Schema<IBook>({
+  userId: {
+    type: String,
+    required: true,
+  },
   title: {
     type: String,
     required: true,
