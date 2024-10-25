@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Book from '../models/book';
-
+import fs from 'fs';
+import path from 'path';
 declare global {
   namespace Express {
     interface Request {
@@ -13,7 +14,7 @@ declare global {
 
 const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { title, author, year, genre, rating } = req.body;
+    let book = JSON.parse(req.body.book);
     let imageFile = '';
     let userId = '';
     if (req.file) {
@@ -25,18 +26,14 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
       userId = req.auth.userId;
     }
 
-    const book = new Book({
+    const newBook = new Book({
+      ...book,
       userId: userId,
-      title,
-      author,
-      year,
-      genre,
-      ratings: [{ userId, grade: rating }],
+      ratings: [{ ...book.ratings[0], userId: userId }],
       imageUrl: imageFile,
-      averageRating: rating,
     });
 
-    await book.save();
+    await newBook.save();
     res.status(201).json({ message: 'Livre crée avec succès' });
   } catch (error: any) {
     res.status(400).json({
@@ -65,7 +62,6 @@ const destroyOne = async (req: Request, res: Response, next: NextFunction) => {
         .status(200)
         .json({ message: 'Livre supprimé avec succès', title: response.title });
     }
-
   } catch (error: any) {
     res.status(200).json({ error: error || "une erreurs s'est produite" });
   }
@@ -120,7 +116,8 @@ const updateRating = async (
 ) => {
   try {
     const { id } = req.params;
-    const rating = req.body.rating > 5 ? 5 : req.body.rating < 0 ? 0 : req.body.rating;
+    const rating =
+      req.body.rating > 5 ? 5 : req.body.rating < 0 ? 0 : req.body.rating;
     let book = await Book.findOne({ _id: id });
     let userId = '';
     if (req.auth) {
@@ -175,15 +172,27 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
     }
     if (book) {
       if (book.userId === currentUser) {
-        const { title, author, year, genre, ratings } = req.body;
-        let updatingBook = { title, author, year, genre, ratings };
-        // let imageFile = '';
+        let reqBook = JSON.parse(req.body.book);
+        const { title, author, year, genre } = reqBook;
+
+        let imageUrl = '';
         if (req.file) {
-          // imageFile = `${req.protocol}://${req.get('host')}/images/${
-          //   req.file.filename
-          // }`;
-          // updatingBook.imageUrl = imageFile
+          imageUrl = `${req.protocol}://${req.get('host')}/images/${
+            req.file.filename
+          }`;
+          const filename = book.imageUrl.split('/images/')[1];
+          fs.unlink(`images/${filename}`, (err) => {
+            if (err) {
+              console.error("Erreur lors de la suppression de l'image :", err);
+            } else {
+              console.log('Image supprimée avec succès :', filename);
+            }
+          });
         }
+        const updatingBook =
+          imageUrl !== ''
+            ? { title, author, year, genre, imageUrl }
+            : { title, author, year, genre };
         const updatedBook = await Book.findByIdAndUpdate(id, updatingBook, {
           new: true,
         });
