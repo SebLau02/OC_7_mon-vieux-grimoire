@@ -56,7 +56,7 @@ const destroy = async (req: Request, res: Response, next: NextFunction) => {
 const destroyOne = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const response = await Book.findOneAndDelete();
+    const response = await Book.findOneAndDelete({ _id: id });
     if (response) {
       res
         .status(200)
