@@ -58,6 +58,14 @@ const destroyOne = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const response = await Book.findOneAndDelete({ _id: id });
     if (response) {
+      const filename = response.imageUrl.split('/images/')[1];
+      fs.unlink(`images/${filename}`, (err) => {
+        if (err) {
+          console.error("Erreur lors de la suppression de l'image :", err);
+        } else {
+          console.log('Image supprimée avec succès :', filename);
+        }
+      });
       res
         .status(200)
         .json({ message: 'Livre supprimé avec succès', title: response.title });
