@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Book from '../models/book';
 import fs from 'fs';
 import path from 'path';
+
 declare global {
   namespace Express {
     interface Request {
@@ -188,14 +189,6 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
           imageUrl = `${req.protocol}://${req.get('host')}/images/${
             req.file.filename
           }`;
-          const filename = book.imageUrl.split('/images/')[1];
-          fs.unlink(`images/${filename}`, (err) => {
-            if (err) {
-              console.error("Erreur lors de la suppression de l'image :", err);
-            } else {
-              console.log('Image supprimée avec succès :', filename);
-            }
-          });
         }
         const updatingBook =
           imageUrl !== ''
@@ -206,11 +199,24 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
         });
 
         if (!updatedBook) {
-          res.status(404).json({ message: 'Livre non trouvé.' });
+          res.status(404).json({
+            message: 'Une erreure est survenue lors de la mis à jours du livre',
+            error: updatedBook,
+          });
+        } else {
+          const filename = book.imageUrl.split('/images/')[1];
+          fs.unlink(`images/${filename}`, (err) => {
+            if (err) {
+              console.error("Erreur lors de la suppression de l'image :", err);
+            } else {
+              console.log('Image supprimée avec succès :', filename);
+            }
+          });
+          res.status(200).json(updatedBook);
         }
-
-        res.status(200).json(updatedBook);
       }
+    } else {
+      res.status(404).json({ message: 'Livre non trouvé.' });
     }
   } catch (error: any) {
     res.status(200).json({ error: error || "une erreurs s'est produite" });
