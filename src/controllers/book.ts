@@ -179,11 +179,11 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
     if (req.auth) {
       currentUser = req.auth.userId;
     }
+
     if (book) {
       if (book.userId === currentUser) {
-        let reqBook = JSON.parse(req.body.book);
+        let reqBook = req.body;
         const { title, author, year, genre } = reqBook;
-
         let imageUrl = '';
         if (req.file) {
           imageUrl = `${req.protocol}://${req.get('host')}/images/${
@@ -204,14 +204,16 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
             error: updatedBook,
           });
         } else {
-          const filename = book.imageUrl.split('/images/')[1];
-          fs.unlink(`images/${filename}`, (err) => {
-            if (err) {
-              console.error("Erreur lors de la suppression de l'image :", err);
-            } else {
-              console.log('Image supprimée avec succès :', filename);
-            }
-          });
+          if (imageUrl !== '') {
+            const filename = book.imageUrl.split('/images/')[1];
+            fs.unlink(`images/${filename}`, (err) => {
+              if (err) {
+                console.error("Erreur lors de la suppression de l'image :", err);
+              } else {
+                console.log('Image supprimée avec succès :', filename);
+              }
+            });
+          }
           res.status(200).json(updatedBook);
         }
       }

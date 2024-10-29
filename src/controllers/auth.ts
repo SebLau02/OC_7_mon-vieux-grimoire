@@ -26,8 +26,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
     if (user) {
       const valid = await bcrypt.compare(req.body.password, user.password);
-
       if (!valid) {
+
         res
           .status(401)
           .json({ message: "Paire login/mot de passe incorrecte" });
