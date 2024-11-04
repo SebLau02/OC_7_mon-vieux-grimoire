@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Book from '../models/book';
 import fs from 'fs';
 import path from 'path';
+import { equal } from 'assert';
 
 declare global {
   namespace Express {
@@ -57,7 +58,15 @@ const destroy = async (req: Request, res: Response, next: NextFunction) => {
 const destroyOne = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const response = await Book.findOneAndDelete({ _id: id });
+    let currentUserId = '';
+    if (req.auth) {
+      currentUserId = req.auth.userId;
+    }
+    const response = await Book.findOneAndDelete({
+      _id: id,
+      userId: currentUserId,
+    }); //  on récupère le livre où les champs id et userId correspondent à ceux fourni si non error
+    console.log(response);
     if (response) {
       const filename = response.imageUrl.split('/images/')[1];
       fs.unlink(`images/${filename}`, (err) => {
@@ -70,6 +79,10 @@ const destroyOne = async (req: Request, res: Response, next: NextFunction) => {
       res
         .status(200)
         .json({ message: 'Livre supprimé avec succès', title: response.title });
+    } else {
+      res.status(401).json({
+        message: "Vous n'êtes pas authorisé à éxécuter cette action",
+      });
     }
   } catch (error: any) {
     res.status(200).json({ error: error || "une erreurs s'est produite" });
@@ -182,8 +195,8 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
 
     if (book) {
       if (book.userId === currentUser) {
-        let reqBook = req.body;
-        const { title, author, year, genre } = reqBook;
+        const { title, author, year, genre } = req.body;
+
         let imageUrl = '';
         if (req.file) {
           imageUrl = `${req.protocol}://${req.get('host')}/images/${
@@ -208,7 +221,10 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
             const filename = book.imageUrl.split('/images/')[1];
             fs.unlink(`images/${filename}`, (err) => {
               if (err) {
-                console.error("Erreur lors de la suppression de l'image :", err);
+                console.error(
+                  "Erreur lors de la suppression de l'image :",
+                  err,
+                );
               } else {
                 console.log('Image supprimée avec succès :', filename);
               }
@@ -221,7 +237,7 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
       res.status(404).json({ message: 'Livre non trouvé.' });
     }
   } catch (error: any) {
-    res.status(200).json({ error: error || "une erreurs s'est produite" });
+    res.status(400).json({ error: error || "une erreurs s'est produite" });
   }
 };
 
