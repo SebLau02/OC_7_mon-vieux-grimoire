@@ -2,7 +2,7 @@
   "name": "mon-vieux-grimoire",
   "version": "1.0.0",
   "description": "api de l'application mon vieux grimoire, P7 du parcours développeur web, Openclassrooms",
-  "main": "server.js",
+  "main": "dist/server.js",
   "scripts": {
     "build": "tsc --build",
     "start": "node dist/server.js",
