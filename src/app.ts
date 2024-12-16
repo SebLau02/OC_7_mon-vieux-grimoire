@@ -1,6 +1,6 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, Express } from 'express';
 const mongoose = require('mongoose');
-const app = express();
+const app: Express = express();
 import authRoutes from './routes/auth';
 import bookRoutes from './routes/book';
 import dotenv from 'dotenv';
