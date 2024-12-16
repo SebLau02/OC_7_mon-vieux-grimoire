@@ -1,5 +1,5 @@
-import multer, { StorageEngine, FileFilterCallback } from 'multer';
-import { Request, Response, NextFunction } from 'express';
+import multer, { FileFilterCallback } from 'multer';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import sharp from 'sharp';
 import path from 'path';
 import fs from 'fs';
@@ -12,13 +12,13 @@ const filter: (
 ) => void = (req, file, callback) => {
   if (file.mimetype.split('/')[0] === 'image') {
     callback(null, true); // Accepte le fichier
-  } 
+  }
 };
 
 // Configurer multer pour stocker les fichiers en mémoire
 const storage = multer.memoryStorage();
 
-const upload = multer({
+const upload: RequestHandler = multer({
   storage,
   fileFilter: filter,
 }).single('image'); // Assurez-vous que le champ du formulaire est nommé 'image'

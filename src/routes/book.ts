@@ -1,9 +1,9 @@
-import express from 'express';
+import express, { Router } from 'express';
 import bookController from '../controllers/book';
 import authorizeRequest from '../middlewares/authorizeRequest';
 import { upload, resizeAndConvertImage } from '../middlewares/multer';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.get('/', bookController.index);
 router.get('/bestrating', bookController.bestRating);
@@ -19,6 +19,12 @@ router.post(
 );
 router.delete('/', authorizeRequest, bookController.destroy);
 router.delete('/:id', authorizeRequest, bookController.destroyOne);
-router.put('/:id', authorizeRequest, upload, resizeAndConvertImage, bookController.updateBook);
+router.put(
+  '/:id',
+  authorizeRequest,
+  upload,
+  resizeAndConvertImage,
+  bookController.updateBook,
+);
 
 export default router;
