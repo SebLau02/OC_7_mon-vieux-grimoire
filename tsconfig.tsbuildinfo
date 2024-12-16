@@ -1,1 +1,1 @@
-{"root":["./src/app.ts","./src/server.ts","./src/controllers/auth.ts","./src/controllers/book.ts","./src/middlewares/authorizeRequest.ts","./src/middlewares/multer.ts","./src/models/book.ts","./src/models/user.ts","./src/routes/auth.ts","./src/routes/book.ts"],"version":"5.6.2"}
+{"root":["./src/app.ts","./src/server.ts","./src/controllers/auth.ts","./src/controllers/book.ts","./src/middlewares/authorizeRequest.ts","./src/middlewares/multer.ts","./src/models/book.ts","./src/models/user.ts","./src/routes/auth.ts","./src/routes/book.ts"],"version":"5.7.2"}
