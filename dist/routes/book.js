@@ -12,9 +12,9 @@ router.get('/', book_1.default.index);
 router.get('/bestrating', book_1.default.bestRating);
 router.post('/:id/rating', authorizeRequest_1.default, book_1.default.updateRating);
 router.get('/:id', book_1.default.show);
-router.post('/', authorizeRequest_1.default, multer_1.upload, multer_1.resizeAndConvertImage, book_1.default.create);
+router.post('/', authorizeRequest_1.default, multer_1.upload, multer_1.resizeAndUploadImage, book_1.default.create);
 router.delete('/', authorizeRequest_1.default, book_1.default.destroy);
 router.delete('/:id', authorizeRequest_1.default, book_1.default.destroyOne);
-router.put('/:id', authorizeRequest_1.default, multer_1.upload, multer_1.resizeAndConvertImage, book_1.default.updateBook);
+router.put('/:id', authorizeRequest_1.default, multer_1.upload, multer_1.resizeAndUploadImage, book_1.default.updateBook);
 exports.default = router;
 //# sourceMappingURL=book.js.map

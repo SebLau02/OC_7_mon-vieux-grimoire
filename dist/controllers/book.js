@@ -4,14 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const book_1 = __importDefault(require("../models/book"));
-const fs_1 = __importDefault(require("fs"));
+const cloudinary_1 = require("cloudinary");
 const create = async (req, res, next) => {
     try {
         let book = JSON.parse(req.body.book);
         let imageFile = '';
         let userId = '';
         if (req.file) {
-            imageFile = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+            imageFile = req.file.path;
         }
         if (req.auth) {
             userId = req.auth.userId;
@@ -53,15 +53,17 @@ const destroyOne = async (req, res, next) => {
             _id: id,
             userId: currentUserId,
         }); //  on récupère le livre où les champs id et userId correspondent à ceux fourni si non error
-        console.log(response);
         if (response) {
-            const filename = response.imageUrl.split('/images/')[1];
-            fs_1.default.unlink(`images/${filename}`, (err) => {
-                if (err) {
-                    console.error("Erreur lors de la suppression de l'image :", err);
+            // Extraire le public_id de l'URL Cloudinary
+            const imageUrl = response.imageUrl; // URL stockée dans la base de données
+            const publicId = imageUrl.split('/').slice(-2).join('/').split('.')[0]; // Ex : "mes-images/<public_id>"
+            // Supprimer l'image sur Cloudinary
+            cloudinary_1.v2.uploader.destroy(publicId, (error, result) => {
+                if (error) {
+                    console.error("Erreur lors de la suppression de l'image Cloudinary :", error);
                 }
                 else {
-                    console.log('Image supprimée avec succès :', filename);
+                    console.log('Image Cloudinary supprimée avec succès :', result);
                 }
             });
             res
@@ -173,7 +175,7 @@ const updateBook = async (req, res, next) => {
                 const { title, author, year, genre } = req.body;
                 let imageUrl = '';
                 if (req.file) {
-                    imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+                    imageUrl = req.file.path;
                 }
                 const updatingBook = imageUrl !== ''
                     ? { title, author, year, genre, imageUrl }
@@ -189,13 +191,20 @@ const updateBook = async (req, res, next) => {
                 }
                 else {
                     if (imageUrl !== '') {
-                        const filename = book.imageUrl.split('/images/')[1];
-                        fs_1.default.unlink(`images/${filename}`, (err) => {
-                            if (err) {
-                                console.error("Erreur lors de la suppression de l'image :", err);
+                        // Extraire le public_id de l'URL Cloudinary
+                        const oldImageUrl = book.imageUrl; // URL stockée dans la base de données
+                        const publicId = oldImageUrl
+                            .split('/')
+                            .slice(-2)
+                            .join('/')
+                            .split('.')[0]; // Ex : "mes-images/<public_id>"
+                        // Supprimer l'image sur Cloudinary
+                        cloudinary_1.v2.uploader.destroy(publicId, (error, result) => {
+                            if (error) {
+                                console.error("Erreur lors de la suppression de l'image Cloudinary :", error);
                             }
                             else {
-                                console.log('Image supprimée avec succès :', filename);
+                                console.log('Image Cloudinary supprimée avec succès :', result);
                             }
                         });
                     }
