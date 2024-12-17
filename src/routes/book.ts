@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import bookController from '../controllers/book';
 import authorizeRequest from '../middlewares/authorizeRequest';
-import { upload, resizeAndConvertImage } from '../middlewares/multer';
+import { upload, resizeAndUploadImage } from '../middlewares/multer';
 
 const router: Router = express.Router();
 
@@ -14,7 +14,7 @@ router.post(
   '/',
   authorizeRequest,
   upload,
-  resizeAndConvertImage,
+  resizeAndUploadImage,
   bookController.create,
 );
 router.delete('/', authorizeRequest, bookController.destroy);
@@ -23,7 +23,7 @@ router.put(
   '/:id',
   authorizeRequest,
   upload,
-  resizeAndConvertImage,
+  resizeAndUploadImage,
   bookController.updateBook,
 );
 
